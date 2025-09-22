@@ -11,15 +11,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
-import { Github, Mail } from "lucide-react";
 import { AxiosError } from "axios";
-import { useAppDispatch } from "../state/hooks";
-import { setTokens } from "../state/authSlice";
 import { login } from "@/lib/api";
 
 export const LoginRoute = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [credentials, setCredentials] = useState({
     username: "",
@@ -29,27 +25,21 @@ export const LoginRoute = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
     try {
-      const tokens = await login(credentials); // should return { access, refresh }
-      dispatch(setTokens(tokens));
+      await login(credentials);
       toast.success("Login successful!");
-      navigate("/"); // same as social login redirect
+      navigate("/");
     } catch (err) {
       const error = err as AxiosError<{ detail: string }>;
-      const detail = error.response?.data?.detail;
-      toast.error(detail ?? "Login failed. Please try again.");
+      toast.error(error.response?.data?.detail ?? "Login failed");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:8000/accounts/google/login/";
-  };
-
-  const handleGithubLogin = () => {
-    window.location.href = "http://localhost:8000/accounts/github/login/";
+    // This is the new dj-rest-auth endpoint
+    window.location.href = "http://localhost:8000/dj-rest-auth/google/";
   };
 
   return (
@@ -66,16 +56,7 @@ export const LoginRoute = () => {
               onClick={handleGoogleLogin}
               disabled={isLoading}
             >
-              <Mail className="mr-2 h-4 w-4" />
               Login with Google
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleGithubLogin}
-              disabled={isLoading}
-            >
-              <Github className="mr-2 h-4 w-4" />
-              Login with GitHub
             </Button>
 
             <div className="relative">
@@ -91,38 +72,28 @@ export const LoginRoute = () => {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <label
-                  htmlFor="username"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Username
-                </label>
+                <label htmlFor="username">Username</label>
                 <Input
                   id="username"
                   type="text"
-                  disabled={isLoading}
                   value={credentials.username}
                   onChange={(e) =>
                     setCredentials({ ...credentials, username: e.target.value })
                   }
+                  disabled={isLoading}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <label
-                  htmlFor="password"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Password
-                </label>
+                <label htmlFor="password">Password</label>
                 <Input
                   id="password"
                   type="password"
-                  disabled={isLoading}
                   value={credentials.password}
                   onChange={(e) =>
                     setCredentials({ ...credentials, password: e.target.value })
                   }
+                  disabled={isLoading}
                   required
                 />
               </div>

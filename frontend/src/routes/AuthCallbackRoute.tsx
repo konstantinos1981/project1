@@ -1,4 +1,3 @@
-// AuthCallbackRoute.tsx
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../state/hooks";
@@ -10,14 +9,18 @@ export const AuthCallbackRoute = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const access = params.get("token"); // backend sends "token" = access
+    const access = params.get("token");
     const refresh = params.get("refresh");
+
+    console.log("Auth callback URL params:", window.location.search);
+    console.log("Auth callback received tokens:", { access, refresh });
 
     if (access && refresh) {
       dispatch(setTokens({ access, refresh }));
-      navigate("/"); // same redirect as username/password login
+      navigate("/"); // Redirect to homepage after successful login
     } else {
-      navigate("/login");
+      console.error("No tokens found in callback URL");
+      navigate("/login"); // Fallback
     }
   }, [dispatch, navigate]);
 

@@ -14,9 +14,6 @@ from pathlib import Path
 from decouple import config
 from datetime import timedelta
 
-Google_Client_ID = config('Google_Client_ID')
-Google_Secret = config('Google_Secret')
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -37,6 +34,7 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost', ]
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.sites',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -44,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     "dj_rest_auth",
+    'dj_rest_auth.registration',
     'corsheaders',
     'api',
     'allauth',
@@ -52,6 +51,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
 
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -66,6 +67,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'backend.urls'
+
+
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -150,19 +153,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        # For each OAuth based provider, either add a ``SocialApp``
-        # (``socialaccount`` app) containing the required client
-        # credentials, or list them here:
-        'APP': {
-            'client_id': Google_Client_ID,
-            'secret': Google_Secret,
-            'key': ''
-        }
-    }
-}
 
 
 # Internationalization
